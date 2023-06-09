@@ -3,10 +3,9 @@ package com.ztzrk.h071211021_finalmobile.metwork;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MovieInstance {
+public class ApiInstance {
 
     private static Retrofit retrofit;
-
 
     public static Retrofit getRetrofit() {
         if (retrofit == null) {

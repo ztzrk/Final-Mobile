@@ -1,10 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary"
     tools:context=".DetailActivity">
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/iv_detail_back"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        android:background="@color/black"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="20dp">
+
+      <ImageButton
+          android:id="@+id/btn_back"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:layout_weight="1"
+          android:background="@drawable/circle_shape"
+          android:src="@drawable/baseline_arrow_back_24"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+      <ImageButton
+          android:id="@+id/btn_fav"
+          android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:layout_weight="1"
+          android:background="@drawable/circle_shape"
+          android:src="@drawable/baseline_favorite_border_24"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintEnd_toEndOf="parent" />
+      <ImageView
+          android:id="@+id/iv_detail_post"
+          android:layout_width="120dp"
+          android:layout_height="170dp"
+          android:layout_marginTop="150dp"
+          android:background="@color/fourth"
+          android:scaleType="centerCrop"
+          app:layout_constraintTop_toBottomOf="@+id/btn_back"
+          app:layout_constraintStart_toStartOf="parent"/>
+      <LinearLayout
+          android:layout_width="180dp"
+          android:layout_height="120dp"
+          android:layout_marginTop="175dp"
+          android:padding="10dp"
+          android:background="@color/secondary"
+          android:orientation="vertical"
+          app:layout_constraintTop_toBottomOf="@+id/btn_fav"
+          app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/tv_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/fourth"
+            android:textStyle="bold"
+            android:text="[qwjr[jq[wrjq[rjqw[j[qwj[qj[qjt[jqw[jq[jq[wjqw[jq[q["
+            android:maxLines="2"/>
+        <TextView
+            android:id="@+id/tv_detail_release"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/fourth"
+            android:fontFamily="@font/poppins_regular"
+            android:text="May 04, 2023"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+          <ImageView
+              android:layout_width="20dp"
+              android:layout_height="20dp"
+              android:src="@drawable/baseline_star_24"/>
+          <TextView
+              android:id="@+id/tv_detail_score"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/fourth"
+              android:textSize="15sp"
+              android:text="7.8"/>
+        </LinearLayout>
+      </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </FrameLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:layout_marginHorizontal="20dp"
+      android:padding="10dp"
+      android:orientation="vertical"
+      android:background="@color/secondary">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Synopsis"
+        android:fontFamily="@font/poppins_regular"
+        android:textStyle="bold"
+        android:textColor="@color/fourth"
+        android:textSize="17dp"/>
+    <TextView
+        android:id="@+id/tv_detail_synopsis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/fourth"
+        android:text="-"/>
+  </LinearLayout>
+
+</LinearLayout>

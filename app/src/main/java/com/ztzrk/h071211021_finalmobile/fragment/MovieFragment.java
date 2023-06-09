@@ -15,12 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.adapter.MovieAdapter;
-import com.ztzrk.h071211021_finalmobile.metwork.MovieInstance;
-import com.ztzrk.h071211021_finalmobile.metwork.MovieInterface;
+import com.ztzrk.h071211021_finalmobile.metwork.ApiInstance;
+import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
 import com.ztzrk.h071211021_finalmobile.model.MovieDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 
@@ -69,9 +68,9 @@ public class MovieFragment extends Fragment {
 
     public void getMovieList() {
         progressBar.setVisibility(View.VISIBLE);
-        Retrofit retrofit = MovieInstance.getRetrofit();
-        MovieInterface movieInterface = retrofit.create(MovieInterface.class);
-        Call<MovieDataResponse> client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", 12);
+        Retrofit retrofit = ApiInstance.getRetrofit();
+        ApiInterface movieInterface = retrofit.create(ApiInterface.class);
+        Call<MovieDataResponse> client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", 1);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -86,7 +85,7 @@ public class MovieFragment extends Fragment {
                             if (response.body() != null) {
                                 ArrayList<MovieResponse> movies = (ArrayList<MovieResponse>) response.body().getResults();
                                 handler.post(() -> {
-                                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+                                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
                                     rv_movie.setLayoutManager(gridLayoutManager);
                                     MovieAdapter adapter = new MovieAdapter(movies);
                                     rv_movie.setAdapter(adapter);
