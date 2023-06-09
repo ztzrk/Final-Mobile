@@ -4,6 +4,11 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MovieResponse implements Parcelable {
 
     @SerializedName("poster_path")
@@ -92,7 +97,17 @@ public class MovieResponse implements Parcelable {
     }
 
     public String getReleaseDate() {
-        return releaseDate;
+        String outputDate = null;
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(releaseDate);
+            outputDate = outputFormat.format(date); // Output: June 09, 2023
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return outputDate;
     }
 
     public void setReleaseDate(String releaseDate) {

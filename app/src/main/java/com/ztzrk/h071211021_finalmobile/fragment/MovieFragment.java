@@ -37,6 +37,13 @@ public class MovieFragment extends Fragment {
     ProgressBar progressBar;
     LinearLayout network_error;
     RecyclerView rv_movie;
+    private int currentPage = 1;
+    private int totalPages = 0;
+
+    private MovieAdapter adapter; // Declare the adapter as a member variable
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean isLoading = false; // Add a flag to prevent multiple simultaneous API calls
+
 
     public MovieFragment() {
         // Required empty public constructor
@@ -60,51 +67,103 @@ public class MovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = getActivity().findViewById(R.id.progressbar);
-        network_error = getActivity().findViewById(R.id.network_error);
-        rv_movie= getActivity().findViewById(R.id.rv_movie);
+        progressBar = view.findViewById(R.id.progressbar);
+        network_error = view.findViewById(R.id.network_error);
+        rv_movie = view.findViewById(R.id.rv_movie);
+
+        setupRecyclerView();
         getMovieList();
+    }
+
+    private void setupRecyclerView() {
+        // Create the adapter instance
+        adapter = new MovieAdapter(new ArrayList<>());
+
+        // Set the adapter on the RecyclerView
+        rv_movie.setAdapter(adapter);
+
+        // Set the layout manager
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        rv_movie.setLayoutManager(gridLayoutManager);
     }
 
     public void getMovieList() {
         progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = ApiInstance.getRetrofit();
         ApiInterface movieInterface = retrofit.create(ApiInterface.class);
-        Call<MovieDataResponse> client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", 1);
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
+        // Load the first page of data
+        loadMovieData(movieInterface, 1);
 
-        executorService.execute(new Runnable() {
+        // Set up scroll listener for infinite scrolling
+        rv_movie.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void run() {
-                client.enqueue(new Callback<MovieDataResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieDataResponse> call, Response<MovieDataResponse> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                ArrayList<MovieResponse> movies = (ArrayList<MovieResponse>) response.body().getResults();
-                                handler.post(() -> {
-                                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
-                                    rv_movie.setLayoutManager(gridLayoutManager);
-                                    MovieAdapter adapter = new MovieAdapter(movies);
-                                    rv_movie.setAdapter(adapter);
-                                    progressBar.setVisibility(View.GONE);
-                                });
-                            }
-                        }
-                    }
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-                    @Override
-                    public void onFailure(Call<MovieDataResponse> call, Throwable t) {
-                        showNetworkErrorInfo();
-                    }
-                });
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    // Reached the end of the list, load the next page
+                    loadNextPage(movieInterface);
+
+                }
             }
         });
-
     }
+
+    private void loadMovieData(ApiInterface movieInterface, int page) {
+        isLoading = true;
+        Call<MovieDataResponse> client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page);
+
+        client.enqueue(new Callback<MovieDataResponse>() {
+            @Override
+            public void onResponse(Call<MovieDataResponse> call, Response<MovieDataResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        MovieDataResponse dataResponse = response.body();
+                        ArrayList<MovieResponse> movies = (ArrayList<MovieResponse>) dataResponse.getResults();
+
+                        // Update the UI on the main thread using a Handler
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (currentPage == 1) {
+                                    // Set the totalPages value only for the first page
+                                    totalPages = dataResponse.getTotalPages();
+                                }
+
+                                // Add the new movies to the adapter
+                                adapter.addAll(movies);
+                                isLoading = false;
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieDataResponse> call, Throwable t) {
+                showNetworkErrorInfo();
+                isLoading = false;
+            }
+        });
+    }
+
+
+    private void loadNextPage(ApiInterface movieInterface) {
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadMovieData(movieInterface, currentPage);
+        }
+    }
+
+
+
 
     private void showNetworkErrorInfo() {
         progressBar.setVisibility(View.GONE);
@@ -118,4 +177,9 @@ public class MovieFragment extends Fragment {
             }
         });
     }
+    public void resetCurrentPage() {
+        currentPage = 1;
+        totalPages = 0;
+    }
+
 }

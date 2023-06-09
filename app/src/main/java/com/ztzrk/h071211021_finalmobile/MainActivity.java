@@ -61,11 +61,19 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fl_container, fragment,
                             MovieFragment.class.getSimpleName())
                     .commit();
-        } else {
+            MovieFragment movieFragment = (MovieFragment) fragment;
+            movieFragment.resetCurrentPage();
+        } else if (fragment instanceof TvFragment) {
             transaction
                     .replace(R.id.fl_container, fragment,
-                            MovieFragment.class.getSimpleName())
-                    .addToBackStack(null)
+                            TvFragment.class.getSimpleName())
+                    .commit();
+            TvFragment tvFragment = (TvFragment) fragment;
+            tvFragment.resetCurrentPage();
+        } else if (fragment instanceof FavoriteFragment) {
+            transaction
+                    .replace(R.id.fl_container, fragment,
+                            FavoriteFragment.class.getSimpleName())
                     .commit();
         }
     }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
+import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
 public class DetailActivity extends AppCompatActivity {
     ImageView ivPost, ivBack;
@@ -28,16 +29,31 @@ public class DetailActivity extends AppCompatActivity {
         tvSynopsis = findViewById(R.id.tv_detail_synopsis);
 
         MovieResponse movieResponse = getIntent().getParcelableExtra("movie");
-        Glide.with(getApplicationContext())
-                .load("https://image.tmdb.org/t/p/w500"+movieResponse.getBackdropPath())
-                .into(ivBack);
-        Glide.with(getApplicationContext())
-                .load("https://image.tmdb.org/t/p/w500"+movieResponse.getPosterPath())
-                .into(ivPost);
-        tvRelease.setText(movieResponse.getReleaseDate());
-        tvSynopsis.setText(movieResponse.getOverview());
-        tvScore.setText(String.valueOf(movieResponse.getVoteAverage()));
-        tvTitle.setText(movieResponse.getTitle());
+        TvResponse tvResponse = getIntent().getParcelableExtra("tv");
+        if (movieResponse != null) {
+            Glide.with(getApplicationContext())
+                    .load("https://image.tmdb.org/t/p/w500"+movieResponse.getBackdropPath())
+                    .into(ivBack);
+            Glide.with(getApplicationContext())
+                    .load("https://image.tmdb.org/t/p/w500"+movieResponse.getPosterPath())
+                    .into(ivPost);
+            tvRelease.setText(movieResponse.getReleaseDate());
+            tvSynopsis.setText(movieResponse.getOverview());
+            tvScore.setText(String.valueOf(movieResponse.getVoteAverage()));
+            tvTitle.setText(movieResponse.getTitle());
+        }
+        else if (tvResponse != null) {
+            tvRelease.setText(tvResponse.getFirstAirDate());
+            tvSynopsis.setText(tvResponse.getOverview());
+            tvScore.setText(String.valueOf(tvResponse.getVoteAverage()));
+            tvTitle.setText(tvResponse.getName());
+            Glide.with(getApplicationContext())
+                    .load("https://image.tmdb.org/t/p/w500"+tvResponse.getBackdropPath())
+                    .into(ivBack);
+            Glide.with(getApplicationContext())
+                    .load("https://image.tmdb.org/t/p/w500"+tvResponse.getPosterPath())
+                    .into(ivPost);
+        }
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override

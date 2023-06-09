@@ -1,11 +1,18 @@
 package com.ztzrk.h071211021_finalmobile.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-public class TvResponse implements Serializable {
+public class TvResponse implements Parcelable {
 
     @SerializedName("poster_path")
     @Expose
@@ -48,7 +55,17 @@ public class TvResponse implements Serializable {
     }
 
     public String getFirstAirDate() {
-        return firstAirDate;
+        String outputDate = null;
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(firstAirDate);
+            outputDate = outputFormat.format(date); // Output: June 09, 2023
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } 
+        return outputDate;
     }
 
     public void setFirstAirDate(String firstAirDate) {
@@ -78,4 +95,46 @@ public class TvResponse implements Serializable {
     public void setVoteAverage(Double voteAverage) {
         this.voteAverage = voteAverage;
     }
+
+
+    // Parcelable implementation
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(posterPath);
+        dest.writeString(overview);
+        dest.writeString(firstAirDate);
+        dest.writeString(name);
+        dest.writeString(backdropPath);
+        dest.writeDouble(voteAverage);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // Parcelable CREATOR
+    public static final Creator<TvResponse> CREATOR = new Creator<TvResponse>() {
+        @Override
+        public TvResponse createFromParcel(Parcel in) {
+            return new TvResponse(in);
+        }
+
+        @Override
+        public TvResponse[] newArray(int size) {
+            return new TvResponse[size];
+        }
+    };
+
+    // Constructor for parcelable deserialization
+    private TvResponse(Parcel in) {
+        posterPath = in.readString();
+        overview = in.readString();
+        firstAirDate = in.readString();
+        name = in.readString();
+        backdropPath = in.readString();
+        voteAverage = in.readDouble();
+    }
 }
+
+

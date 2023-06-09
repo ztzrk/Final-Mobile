@@ -1,5 +1,6 @@
 package com.ztzrk.h071211021_finalmobile.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.ztzrk.h071211021_finalmobile.DetailActivity;
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
@@ -35,17 +37,31 @@ public class TvAdapter extends RecyclerView.Adapter<TvAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TvAdapter.ViewHolder holder, int position) {
-        TvResponse movie = tvs.get(position);
+        TvResponse tv = tvs.get(position);
         Glide.with(holder.itemView.getContext())
-                .load("https://image.tmdb.org/t/p/w500"+movie.getPosterPath())
+                .load("https://image.tmdb.org/t/p/w500"+tv.getPosterPath())
                 .into(holder.ivPostImg);
-        holder.tvTitle.setText(movie.getName());
+        holder.tvTitle.setText(tv.getName());
+        holder.ivPostImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.itemView.getContext(), DetailActivity.class);
+                intent.putExtra("tv", tv);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return tvs.size();
     }
+
+    public void addAll(ArrayList<TvResponse> tvs) {
+        this.tvs.addAll(tvs);
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle;
         private ImageView ivPostImg;

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.ztzrk.h071211021_finalmobile.R;
-import com.ztzrk.h071211021_finalmobile.adapter.MovieAdapter;
 import com.ztzrk.h071211021_finalmobile.adapter.TvAdapter;
 import com.ztzrk.h071211021_finalmobile.metwork.ApiInstance;
 import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
-import com.ztzrk.h071211021_finalmobile.model.MovieDataResponse;
-import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
@@ -36,11 +34,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class TvFragment extends Fragment {
-
     private static TvFragment instance;
     ProgressBar progressBar;
     LinearLayout network_error;
     RecyclerView rv_tv;
+    private int currentPage = 1;
+    private int totalPages = 0;
+
+    private TvAdapter adapter; // Declare the adapter as a member variable
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean isLoading = false; // Add a flag to prevent multiple simultaneous API calls
+
 
     public TvFragment() {
         // Required empty public constructor
@@ -53,7 +57,6 @@ public class TvFragment extends Fragment {
         return instance;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,50 +68,103 @@ public class TvFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = getActivity().findViewById(R.id.progressbar);
-        network_error = getActivity().findViewById(R.id.network_error);
-        rv_tv = getActivity().findViewById(R.id.rv_tv);
+        progressBar = view.findViewById(R.id.progressbar);
+        network_error = view.findViewById(R.id.network_error);
+        rv_tv = view.findViewById(R.id.rv_tv);
+        setupRecyclerView();
         getTvList();
     }
+
+    private void setupRecyclerView() {
+        // Create the adapter instance
+        adapter = new TvAdapter(new ArrayList<>());
+
+        // Set the layout manager
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        rv_tv.setLayoutManager(gridLayoutManager);
+
+        // Set the adapter on the RecyclerView
+        rv_tv.setAdapter(adapter);
+    }
+
 
     public void getTvList() {
         progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = ApiInstance.getRetrofit();
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<TvDataResponse> client = apiInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", 1);
+        ApiInterface tvInterface = retrofit.create(ApiInterface.class);
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
+        // Load the first page of data
+        loadTvData(tvInterface, 1);
 
-        executorService.execute(new Runnable() {
+        // Set up scroll listener for infinite scrolling
+        rv_tv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void run() {
-                client.enqueue(new Callback<TvDataResponse>() {
-                    @Override
-                    public void onResponse(Call<TvDataResponse> call, Response<TvDataResponse> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                ArrayList<TvResponse> tvs = (ArrayList<TvResponse>) response.body().getResults();
-                                handler.post(() -> {
-                                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
-                                    rv_tv.setLayoutManager(gridLayoutManager);
-                                    TvAdapter adapter = new TvAdapter(tvs);
-                                    rv_tv.setAdapter(adapter);
-                                    progressBar.setVisibility(View.GONE);
-                                });
-                            }
-                        }
-                    }
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-                    @Override
-                    public void onFailure(Call<TvDataResponse> call, Throwable t) {
-                        showNetworkErrorInfo();
-                    }
-                });
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    // Reached the end of the list, load the next page
+                    loadNextPage(tvInterface);
+
+                }
             }
         });
+    }
+    private void loadTvData(ApiInterface tvInterface, int page) {
+        isLoading = true;
+        Call<TvDataResponse> client = tvInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", page);
 
+        client.enqueue(new Callback<TvDataResponse>() {
+            @Override
+            public void onResponse(Call<TvDataResponse> call, Response<TvDataResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        TvDataResponse dataResponse = response.body();
+                        ArrayList<TvResponse> tvs = (ArrayList<TvResponse>) dataResponse.getResults();
+
+                        // Check if the data is being retrieved correctly
+                        for (TvResponse tv : tvs) {
+                            Log.d("TvFragment", "TV Title: " + tv.getName());
+                        }
+
+                        // Update the UI on the main thread using a Handler
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (currentPage == 1) {
+                                    // Set the totalPages value only for the first page
+                                    totalPages = dataResponse.getTotalPages();
+                                }
+
+                                adapter.addAll(tvs);
+                                isLoading = false;
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TvDataResponse> call, Throwable t) {
+                showNetworkErrorInfo();
+                isLoading = false;
+            }
+        });
+    }
+
+
+
+    private void loadNextPage(ApiInterface tvInterface) {
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadTvData(tvInterface, currentPage);
+        }
     }
 
     private void showNetworkErrorInfo() {
@@ -122,5 +178,10 @@ public class TvFragment extends Fragment {
                 getTvList();
             }
         });
+    }
+
+    public void resetCurrentPage() {
+        currentPage = 1;
+        totalPages = 0;
     }
 }
