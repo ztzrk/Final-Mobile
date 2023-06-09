@@ -35,6 +35,12 @@ public class MovieResponse implements Parcelable {
     @Expose
     private Double voteAverage;
 
+    @SerializedName("id")
+    @Expose
+    private int id;
+
+    public MovieResponse() {}
+
     protected MovieResponse(Parcel in) {
         posterPath = in.readString();
         overview = in.readString();
@@ -80,6 +86,13 @@ public class MovieResponse implements Parcelable {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getPosterPath() {
         return posterPath;
     }

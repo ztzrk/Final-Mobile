@@ -38,6 +38,19 @@ public class TvResponse implements Parcelable {
     @Expose
     private Double voteAverage;
 
+    @SerializedName("id")
+    @Expose
+    private int id;
+
+    public TvResponse() {}
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getPosterPath() {
         return posterPath;
     }
