@@ -5,14 +5,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieInstance {
 
-    private static Retrofit retrofit = null;
+    private static Retrofit retrofit;
 
 
-    public static Retrofit getClient() {
+    public static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("https://api.themoviedb.org/3/movie/550?api_key=edbbdb4bddde7b1048a3ff5d8736ce74")
+                    .baseUrl("https://api.themoviedb.org/")
                     .build();
         }
         return retrofit;

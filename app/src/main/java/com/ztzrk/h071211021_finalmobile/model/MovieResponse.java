@@ -14,15 +14,11 @@ public class MovieResponse implements Serializable {
     @Expose
     private String overview;
 
-    @SerializedName("first_air_date")
+    @SerializedName("release_date")
     @Expose
     private String releaseDate;
 
-    @SerializedName("original_name")
-    @Expose
-    private String originalTitle;
-
-    @SerializedName("name")
+    @SerializedName("title")
     @Expose
     private String title;
 
@@ -56,14 +52,6 @@ public class MovieResponse implements Serializable {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
-    }
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
     }
 
     public String getTitle() {
