@@ -1,6 +1,6 @@
 # Movie App with TMDB API
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Name : Aflah Alifu Na
+NIM : H071211021
 
 This is a movie app built using the TMDB (The Movie Database) API. It allows users to search for movies, view details about each movie, and save their favorite movies for future reference.
 
