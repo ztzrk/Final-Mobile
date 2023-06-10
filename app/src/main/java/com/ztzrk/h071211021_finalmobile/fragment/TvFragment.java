@@ -170,6 +170,7 @@ public class TvFragment extends Fragment {
                                 adapter.addAll(tvs);
                                 isLoading = false;
                                 progressBar.setVisibility(View.GONE);
+                                sortRadioGroup.setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -196,6 +197,7 @@ public class TvFragment extends Fragment {
     private void showNetworkErrorInfo() {
         progressBar.setVisibility(View.GONE);
         network_error.setVisibility(View.VISIBLE);
+        sortRadioGroup.setVisibility(View.GONE);
 
         network_error.setOnClickListener(new View.OnClickListener() {
             @Override

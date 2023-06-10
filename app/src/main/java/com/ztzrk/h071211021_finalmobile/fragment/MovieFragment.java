@@ -40,6 +40,7 @@ public class MovieFragment extends Fragment {
     RecyclerView rv_movie;
     private int currentPage = 1;
     private int totalPages = 0;
+    RadioGroup sortRadioGroup;
 
 
     private String selectedSortOption = "popularity.desc"; // Default sort option
@@ -76,7 +77,7 @@ public class MovieFragment extends Fragment {
         rv_movie = view.findViewById(R.id.rv_movie);
 
 
-        RadioGroup sortRadioGroup = view.findViewById(R.id.radioGroupSort);
+        sortRadioGroup = view.findViewById(R.id.radioGroupSort);
         sortRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -117,6 +118,7 @@ public class MovieFragment extends Fragment {
 
     public void getMovieList() {
         progressBar.setVisibility(View.VISIBLE);
+
         Retrofit retrofit = ApiInstance.getRetrofit();
         ApiInterface movieInterface = retrofit.create(ApiInterface.class);
 
@@ -167,6 +169,7 @@ public class MovieFragment extends Fragment {
                                 adapter.addAll(movies);
                                 isLoading = false;
                                 progressBar.setVisibility(View.GONE);
+                                sortRadioGroup.setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -193,6 +196,7 @@ public class MovieFragment extends Fragment {
 
 
     private void showNetworkErrorInfo() {
+        sortRadioGroup.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
         network_error.setVisibility(View.VISIBLE);
 
