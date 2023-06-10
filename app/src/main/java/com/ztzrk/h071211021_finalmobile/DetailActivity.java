@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +31,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
-    ImageView ivPost, ivBack;
-    ImageButton btnBack, btnFav;
-    TextView tvTitle, tvRelease, tvScore, tvSynopsis;
+    ImageView ivPost, ivBack, btnFav, btnBack;
+    TextView tvTitle, tvRelease, tvScore, tvSynopsis, tvType;
+    RatingBar simpleRatingBar;
     private DatabaseHelper databaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,9 @@ public class DetailActivity extends AppCompatActivity {
         tvScore = findViewById(R.id.tv_detail_score);
         tvTitle = findViewById(R.id.tv_detail_title);
         tvSynopsis = findViewById(R.id.tv_detail_synopsis);
+        tvType = findViewById(R.id.tv_type);
         btnFav = findViewById(R.id.btn_fav);
+        simpleRatingBar = (RatingBar) findViewById(R.id.simpleRatingBar);
 
         // Get the movie or TV show data from the intent
         MovieResponse movieResponse = getIntent().getParcelableExtra("movie");
@@ -183,9 +186,12 @@ public class DetailActivity extends AppCompatActivity {
         Glide.with(getApplicationContext())
                 .load("https://image.tmdb.org/t/p/w500" + movieResponse.getPosterPath())
                 .into(ivPost);
-        tvRelease.setText(movieResponse.getReleaseDate());
+        String dt = movieResponse.getReleaseDate();
+        tvType.setText("Movie");
+        tvRelease.setText(toFormat(dt));
         tvSynopsis.setText(movieResponse.getOverview());
         tvScore.setText(String.valueOf(movieResponse.getVoteAverage()));
+        simpleRatingBar.setRating((float) (movieResponse.getVoteAverage()/2.0));
         tvTitle.setText(movieResponse.getTitle());
 
         System.out.println(movieResponse.getId());
@@ -204,9 +210,12 @@ public class DetailActivity extends AppCompatActivity {
         Glide.with(getApplicationContext())
                 .load("https://image.tmdb.org/t/p/w500" + tvResponse.getPosterPath())
                 .into(ivPost);
-        tvRelease.setText(tvResponse.getFirstAirDate());
+        String dt = tvResponse.getFirstAirDate();
+        tvType.setText("Tv Shows");
+        tvRelease.setText(toFormat(dt));
         tvSynopsis.setText(tvResponse.getOverview());
         tvScore.setText(String.valueOf(tvResponse.getVoteAverage()));
+        simpleRatingBar.setRating((float) (tvResponse.getVoteAverage()/2.0));
         tvTitle.setText(tvResponse.getName());
 
         if (isFavorite(tvResponse.getId(), DatabaseContract.TvEntry.TABLE_NAME)) {
@@ -214,5 +223,18 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             btnFav.setImageResource(R.drawable.baseline_favorite_border_24);
         }
+    }
+    private String toFormat(String releaseDate) {
+        String outputDate = null;
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(releaseDate);
+            outputDate = outputFormat.format(date); // Output: June 09, 2023
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return  outputDate;
     }
 }

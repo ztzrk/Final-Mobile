@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MovieResponse implements Parcelable {
@@ -38,6 +39,10 @@ public class MovieResponse implements Parcelable {
     @SerializedName("id")
     @Expose
     private int id;
+
+    @SerializedName("genre_ids")
+    @Expose
+    private List<Integer> genreIds;
 
     public MovieResponse() {}
 
@@ -109,20 +114,6 @@ public class MovieResponse implements Parcelable {
 
     public void setOverview(String overview) {
         this.overview = overview;
-    }
-
-    private void toFormat() {
-        String outputDate = null;
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-
-        try {
-            Date date = inputFormat.parse(releaseDate);
-            outputDate = outputFormat.format(date); // Output: June 09, 2023
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        releaseDate =  outputDate;
     }
 
     public String getReleaseDate() {

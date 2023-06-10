@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.adapter.MovieAdapter;
@@ -39,6 +40,9 @@ public class MovieFragment extends Fragment {
     RecyclerView rv_movie;
     private int currentPage = 1;
     private int totalPages = 0;
+
+
+    private String selectedSortOption = "popularity.desc"; // Default sort option
 
     private MovieAdapter adapter; // Declare the adapter as a member variable
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -71,9 +75,33 @@ public class MovieFragment extends Fragment {
         network_error = view.findViewById(R.id.network_error);
         rv_movie = view.findViewById(R.id.rv_movie);
 
+
+        RadioGroup sortRadioGroup = view.findViewById(R.id.radioGroupSort);
+        sortRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                selectedSortOption = getSelectedSortOption(checkedId);
+                resetCurrentPage();
+                setupRecyclerView();// Reset the page count when sorting changes
+                getMovieList(); // Reload the movie list with the new sort option
+            }
+        });
         setupRecyclerView();
         getMovieList();
     }
+
+    private String getSelectedSortOption(int checkedId) {
+        if (checkedId == R.id.radioButtonPopularity) {
+            return "popularity.desc";
+        } else if (checkedId == R.id.radioButtonRating) {
+            return "vote_average.desc";
+        } else if (checkedId == R.id.radioButtonReleaseDate) {
+            return "release_date.desc";
+        } else {
+            return "popularity.desc"; // Default sort option
+        }
+    }
+
 
     private void setupRecyclerView() {
         // Create the adapter instance
@@ -109,7 +137,6 @@ public class MovieFragment extends Fragment {
                 if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
                     // Reached the end of the list, load the next page
                     loadNextPage(movieInterface);
-
                 }
             }
         });
@@ -117,7 +144,7 @@ public class MovieFragment extends Fragment {
 
     private void loadMovieData(ApiInterface movieInterface, int page) {
         isLoading = true;
-        Call<MovieDataResponse> client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page);
+        Call<MovieDataResponse> client = client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption);
 
         client.enqueue(new Callback<MovieDataResponse>() {
             @Override

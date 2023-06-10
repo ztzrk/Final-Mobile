@@ -6,7 +6,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.TvFragment">
 
+    <RadioGroup
+        android:id="@+id/radioGroupSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
+        <RadioButton
+            android:id="@+id/radioButtonPopularity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popularity"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/secondary"
+            android:buttonTint="@color/secondary"
+            android:textStyle="bold"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioButtonRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rating"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/secondary"
+            android:buttonTint="@color/secondary"
+            android:textStyle="bold"/>
+
+        <RadioButton
+            android:id="@+id/radioButtonReleaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Release Date"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/secondary"
+            android:buttonTint="@color/secondary"
+            android:textStyle="bold"/>
+
+    </RadioGroup>
     <ProgressBar
         android:id="@+id/progressbar"
         android:layout_width="100dp"
@@ -14,6 +52,7 @@
         android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="40dp"
         android:id="@+id/rv_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +63,7 @@
         android:id="@+id/network_error"
         layout="@layout/network_error"
         android:visibility="gone"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

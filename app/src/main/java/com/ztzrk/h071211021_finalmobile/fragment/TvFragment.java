@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.adapter.TvAdapter;
@@ -41,6 +42,8 @@ public class TvFragment extends Fragment {
     private int currentPage = 1;
     private int totalPages = 0;
 
+    RadioGroup sortRadioGroup;
+    String selectedSortOption = "popularity.desc";
     private TvAdapter adapter; // Declare the adapter as a member variable
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private boolean isLoading = false; // Add a flag to prevent multiple simultaneous API calls
@@ -71,8 +74,30 @@ public class TvFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressbar);
         network_error = view.findViewById(R.id.network_error);
         rv_tv = view.findViewById(R.id.rv_tv);
+        sortRadioGroup = view.findViewById(R.id.radioGroupSort);
+        sortRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                selectedSortOption = getSelectedSortOption(checkedId);
+                resetCurrentPage();
+                setupRecyclerView();
+                getTvList();
+            }
+        });
+
         setupRecyclerView();
         getTvList();
+    }
+    private String getSelectedSortOption(int checkedId) {
+        if (checkedId == R.id.radioButtonPopularity) {
+            return "popularity.desc";
+        } else if (checkedId == R.id.radioButtonRating) {
+            return "vote_average.desc";
+        } else if (checkedId == R.id.radioButtonReleaseDate) {
+            return "first_air_date.desc";
+        } else {
+            return "popularity.desc"; // Default sort option
+        }
     }
 
     private void setupRecyclerView() {
@@ -117,7 +142,8 @@ public class TvFragment extends Fragment {
     }
     private void loadTvData(ApiInterface tvInterface, int page) {
         isLoading = true;
-        Call<TvDataResponse> client = tvInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", page);
+        Call<TvDataResponse> client = tvInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption);
+
 
         client.enqueue(new Callback<TvDataResponse>() {
             @Override
