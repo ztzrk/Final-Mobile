@@ -42,6 +42,7 @@ public class MovieResponse implements Parcelable {
     public MovieResponse() {}
 
     protected MovieResponse(Parcel in) {
+        id = in.readInt();
         posterPath = in.readString();
         overview = in.readString();
         releaseDate = in.readString();
@@ -73,6 +74,7 @@ public class MovieResponse implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeString(releaseDate);
@@ -109,7 +111,7 @@ public class MovieResponse implements Parcelable {
         this.overview = overview;
     }
 
-    public String getReleaseDate() {
+    private void toFormat() {
         String outputDate = null;
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
@@ -120,7 +122,11 @@ public class MovieResponse implements Parcelable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return outputDate;
+        releaseDate =  outputDate;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
     public void setReleaseDate(String releaseDate) {

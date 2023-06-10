@@ -68,17 +68,7 @@ public class TvResponse implements Parcelable {
     }
 
     public String getFirstAirDate() {
-        String outputDate = null;
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-
-        try {
-            Date date = inputFormat.parse(firstAirDate);
-            outputDate = outputFormat.format(date); // Output: June 09, 2023
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } 
-        return outputDate;
+        return firstAirDate;
     }
 
     public void setFirstAirDate(String firstAirDate) {
@@ -113,6 +103,7 @@ public class TvResponse implements Parcelable {
     // Parcelable implementation
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeString(firstAirDate);
@@ -141,6 +132,7 @@ public class TvResponse implements Parcelable {
 
     // Constructor for parcelable deserialization
     private TvResponse(Parcel in) {
+        id = in.readInt();
         posterPath = in.readString();
         overview = in.readString();
         firstAirDate = in.readString();

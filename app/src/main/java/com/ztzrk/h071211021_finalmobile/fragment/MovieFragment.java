@@ -77,7 +77,7 @@ public class MovieFragment extends Fragment {
 
     private void setupRecyclerView() {
         // Create the adapter instance
-        adapter = new MovieAdapter(getActivity(), new ArrayList<>());
+        adapter = new MovieAdapter(new ArrayList<>());
 
         // Set the adapter on the RecyclerView
         rv_movie.setAdapter(adapter);

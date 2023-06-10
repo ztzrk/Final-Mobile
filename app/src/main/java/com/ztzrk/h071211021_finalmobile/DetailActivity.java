@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,28 +24,16 @@ import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DetailActivity extends AppCompatActivity {
-    public static final int DETAIL_ACTIVITY_REQUEST_CODE = 1;
     ImageView ivPost, ivBack;
     ImageButton btnBack, btnFav;
     TextView tvTitle, tvRelease, tvScore, tvSynopsis;
     private DatabaseHelper databaseHelper;
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == DETAIL_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            boolean isFavorite = data.getBooleanExtra("isFavorite", false);
-            if (isFavorite) {
-                // Update the favorite button
-                btnFav.setImageResource(R.drawable.baseline_favorite_24);
-            } else {
-                // Update the favorite button
-                btnFav.setImageResource(R.drawable.baseline_favorite_border_24);
-            }
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,17 +149,31 @@ public class DetailActivity extends AppCompatActivity {
 
     private void removeFavorite(int apiId, String tableName) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        int result = db.delete(
-                tableName,
-                DatabaseContract.MovieEntry.COLUMN_NAME_API_ID + "=?",
-                new String[]{String.valueOf(apiId)}
-        );
+        int result;
+
+        if (tableName.equals(DatabaseContract.MovieEntry.TABLE_NAME)) {
+            result = db.delete(
+                    tableName,
+                    DatabaseContract.MovieEntry.COLUMN_NAME_API_ID + "=?",
+                    new String[]{String.valueOf(apiId)}
+            );
+        } else if (tableName.equals(DatabaseContract.TvEntry.TABLE_NAME)) {
+            result = db.delete(
+                    tableName,
+                    DatabaseContract.TvEntry.COLUMN_NAME_API_ID + "=?",
+                    new String[]{String.valueOf(apiId)}
+            );
+        } else {
+            result = -1;
+        }
+
         if (result > 0) {
             Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show();
             btnFav.setImageResource(R.drawable.baseline_favorite_border_24);
         }
         db.close();
     }
+
 
     private void loadMovieData(MovieResponse movieResponse) {
         // Update UI elements here
@@ -185,6 +188,7 @@ public class DetailActivity extends AppCompatActivity {
         tvScore.setText(String.valueOf(movieResponse.getVoteAverage()));
         tvTitle.setText(movieResponse.getTitle());
 
+        System.out.println(movieResponse.getId());
         if (isFavorite(movieResponse.getId(), DatabaseContract.MovieEntry.TABLE_NAME)) {
             btnFav.setImageResource(R.drawable.baseline_favorite_24);
         } else {

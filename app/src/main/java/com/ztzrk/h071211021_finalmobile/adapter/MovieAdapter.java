@@ -1,6 +1,5 @@
 package com.ztzrk.h071211021_finalmobile.adapter;
 
-import static com.ztzrk.h071211021_finalmobile.DetailActivity.DETAIL_ACTIVITY_REQUEST_CODE;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,10 +23,8 @@ import java.util.ArrayList;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     public ArrayList<MovieResponse> movies;
-    private Activity activity;
-    public MovieAdapter(Activity activity, ArrayList<MovieResponse> movies) {
+    public MovieAdapter(ArrayList<MovieResponse> movies) {
         this.movies = movies;
-        this.activity = activity;
     }
     @NonNull
     @Override
@@ -48,9 +45,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         holder.ivPostImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, DetailActivity.class);
+                Intent intent = new Intent(v.getContext(), DetailActivity.class);
                 intent.putExtra("movie", movie);
-                activity.startActivityForResult(intent, DETAIL_ACTIVITY_REQUEST_CODE);
+                v.getContext().startActivity(intent);
             }
         });
     }

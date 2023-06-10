@@ -18,7 +18,6 @@ public class MovieMapper {
         return values;
     }
 
-
     public static MovieResponse fromCursor(Cursor cursor) {
         MovieResponse movie = new MovieResponse();
         movie.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.MovieEntry.COLUMN_NAME_API_ID)));
