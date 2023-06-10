@@ -25,7 +25,9 @@ import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
 import com.ztzrk.h071211021_finalmobile.model.TvDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +43,7 @@ public class TvFragment extends Fragment {
     RecyclerView rv_tv;
     private int currentPage = 1;
     private int totalPages = 0;
+    String formattedDate;
 
     RadioGroup sortRadioGroup;
     String selectedSortOption = "popularity.desc";
@@ -70,6 +73,12 @@ public class TvFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Date currentDate = new Date();
+
+        // Format the date as "YYYY-MM-DD"
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        formattedDate = formatter.format(currentDate);
 
         progressBar = view.findViewById(R.id.progressbar);
         network_error = view.findViewById(R.id.network_error);
@@ -135,16 +144,19 @@ public class TvFragment extends Fragment {
                 if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
                     // Reached the end of the list, load the next page
                     loadNextPage(tvInterface);
-
                 }
             }
         });
     }
     private void loadTvData(ApiInterface tvInterface, int page) {
         isLoading = true;
-        Call<TvDataResponse> client = tvInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption);
-
-
+        Call<TvDataResponse> client = null;
+        if (selectedSortOption.equals("popular.desc")) {
+            client = tvInterface.getPopularTv("edbbdb4bddde7b1048a3ff5d8736ce74", page);
+        }
+        else {
+            client = tvInterface.getTv("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption, formattedDate);
+        }
         client.enqueue(new Callback<TvDataResponse>() {
             @Override
             public void onResponse(Call<TvDataResponse> call, Response<TvDataResponse> response) {

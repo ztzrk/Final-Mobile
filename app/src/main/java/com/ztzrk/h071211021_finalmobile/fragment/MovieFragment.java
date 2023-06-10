@@ -24,7 +24,11 @@ import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
 import com.ztzrk.h071211021_finalmobile.model.MovieDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +45,7 @@ public class MovieFragment extends Fragment {
     private int currentPage = 1;
     private int totalPages = 0;
     RadioGroup sortRadioGroup;
+    String formattedDate;
 
 
     private String selectedSortOption = "popularity.desc"; // Default sort option
@@ -72,6 +77,12 @@ public class MovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Date currentDate = new Date();
+
+        // Format the date as "YYYY-MM-DD"
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        formattedDate = formatter.format(currentDate);
+
         progressBar = view.findViewById(R.id.progressbar);
         network_error = view.findViewById(R.id.network_error);
         rv_movie = view.findViewById(R.id.rv_movie);
@@ -97,7 +108,7 @@ public class MovieFragment extends Fragment {
         } else if (checkedId == R.id.radioButtonRating) {
             return "vote_average.desc";
         } else if (checkedId == R.id.radioButtonReleaseDate) {
-            return "release_date.desc";
+            return "primary_release_date.desc";
         } else {
             return "popularity.desc"; // Default sort option
         }
@@ -146,7 +157,13 @@ public class MovieFragment extends Fragment {
 
     private void loadMovieData(ApiInterface movieInterface, int page) {
         isLoading = true;
-        Call<MovieDataResponse> client = client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption);
+        Call<MovieDataResponse> client = null;
+        if (selectedSortOption.equals("popularity.desc")) {
+            client = movieInterface.getPopularMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page);
+        }
+        else {
+            client = movieInterface.getMovie("edbbdb4bddde7b1048a3ff5d8736ce74", page, selectedSortOption, formattedDate);
+        }
 
         client.enqueue(new Callback<MovieDataResponse>() {
             @Override

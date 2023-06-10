@@ -12,7 +12,21 @@ public interface ApiInterface {
     getMovie(
             @Query("api_key") String apiKey,
             @Query("page") int pageIndex,
-            @Query("sort_by") String sortBy
+            @Query("sort_by") String sortBy,
+            @Query("primary_release_date.lte") String currentDate
+    );
+    @GET("3/movie/popular?language=en-US")
+    Call<MovieDataResponse>
+    getPopularMovie(
+            @Query("api_key") String apiKey,
+            @Query("page") int pageIndex
+    );
+
+    @GET("3/3/tv/popular?language=en-US")
+    Call<TvDataResponse>
+    getPopularTv(
+            @Query("api_key") String apiKey,
+            @Query("page") int pageIndex
     );
 
     @GET("3/discover/tv?language=en-US")
@@ -20,6 +34,7 @@ public interface ApiInterface {
     getTv(
             @Query("api_key") String apiKey,
             @Query("page") int pageIndex,
-            @Query("sort_by") String sortBy
+            @Query("sort_by") String sortBy,
+            @Query("first_air_date.lte") String currentDate
     );
 }
