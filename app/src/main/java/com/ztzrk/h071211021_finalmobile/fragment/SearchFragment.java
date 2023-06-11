@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -38,14 +39,18 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class SearchFragment extends Fragment {
+    private static SearchFragment instance;
     private ProgressBar progressBar;
     private RecyclerView rv_movie;
     private MovieAdapter movieAdapter;
+    LinearLayout network_error;
     private TvAdapter tvAdapter;
     private ApiInterface apiInterface;
     private TextView tvSearch;
+    RadioGroup radioGroup;
     private RadioButton radioButtonMovie;
     private RadioButton radioButtonTV;
+    SearchView searchView;
     private String searchType = "movie";
 
     private int currentPage = 1;
@@ -55,6 +60,12 @@ public class SearchFragment extends Fragment {
 
     public SearchFragment() {
         // Required empty public constructor
+    }
+    public static SearchFragment getInstance() {
+        if (instance == null) {
+            instance = new SearchFragment();
+        }
+        return instance;
     }
 
     @Override
@@ -69,6 +80,7 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         progressBar = view.findViewById(R.id.progressbar);
+        network_error = view.findViewById(R.id.network_error);
         rv_movie = view.findViewById(R.id.rv_movie);
         tvSearch = view.findViewById(R.id.tvSearch);
 
@@ -85,7 +97,7 @@ public class SearchFragment extends Fragment {
         radioButtonMovie = view.findViewById(R.id.radioButtonMovie);
         radioButtonTV = view.findViewById(R.id.radioButtonTV);
 
-        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+        radioGroup = view.findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -103,7 +115,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        SearchView searchView = view.findViewById(R.id.searchView);
+        searchView = view.findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -149,6 +161,9 @@ public class SearchFragment extends Fragment {
     }
     private void searchMedia(String query) {
         progressBar.setVisibility(View.VISIBLE);
+        radioGroup.setVisibility(View.VISIBLE);
+        searchView.setVisibility(View.VISIBLE);
+        tvSearch.setVisibility(View.VISIBLE);
 
         if (searchType.equals("movie")) {
             Call<MovieDataResponse> movieCall = apiInterface.searchMovies("edbbdb4bddde7b1048a3ff5d8736ce74", query, currentPage);
@@ -174,8 +189,8 @@ public class SearchFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<MovieDataResponse> call, Throwable t) {
+                    showNetworkErrorInfo();
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (searchType.equals("tv")) {
@@ -202,8 +217,8 @@ public class SearchFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<TvDataResponse> call, Throwable t) {
+                    showNetworkErrorInfo();
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -234,4 +249,26 @@ public class SearchFragment extends Fragment {
             tvAdapter.setTvs(new ArrayList<>());
         }
     }
+    private void showNetworkErrorInfo() {
+        progressBar.setVisibility(View.GONE);
+        network_error.setVisibility(View.VISIBLE);
+        radioGroup.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
+        tvSearch.setVisibility(View.GONE);
+
+        network_error.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                network_error.setVisibility(View.GONE);
+                if (searchType.equals("movie")) {
+                    radioGroup.check(R.id.radioButtonMovie);
+                } else if (searchType.equals("tv")) {
+                    radioGroup.check(R.id.radioButtonTV);
+                }
+                String query = searchView.getQuery().toString();
+                searchMedia(query);
+            }
+        });
+    }
+
 }

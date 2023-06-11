@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.item_fav) {
                     selectedFragment = FavoriteFragment.getInstance();
                 } else if (item.getItemId() == R.id.item_search) {
-                    selectedFragment = new SearchFragment();
+                    selectedFragment = SearchFragment.getInstance();
                 }
 
                 if (selectedFragment != null) {
