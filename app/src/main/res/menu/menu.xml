@@ -9,6 +9,10 @@
         android:id="@+id/item_tv"
         android:icon="@drawable/baseline_tv_24"/>
     <item
+        android:title="Search"
+        android:id="@+id/item_search"
+        android:icon="@drawable/baseline_search_24"/>
+    <item
         android:title="Favorites"
         android:id="@+id/item_fav"
         android:icon="@drawable/baseline_favorite_border_24"/>

@@ -19,6 +19,7 @@ import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -60,6 +61,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public void addAll(ArrayList<MovieResponse> movies) {
         this.movies.addAll(movies);
         notifyDataSetChanged();
+    }
+    public void setMovies(List<MovieResponse> movies) {
+        this.movies = (ArrayList<MovieResponse>) movies;
+        notifyDataSetChanged();
+    }
+
+    public void addMovies(List<MovieResponse> newMovies) {
+        int startPosition = movies.size();
+        movies.addAll(newMovies);
+        notifyItemRangeInserted(startPosition, newMovies.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -17,6 +17,7 @@ import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class TvAdapter extends RecyclerView.Adapter<TvAdapter.ViewHolder> {
@@ -59,6 +60,10 @@ public class TvAdapter extends RecyclerView.Adapter<TvAdapter.ViewHolder> {
 
     public void addAll(ArrayList<TvResponse> tvs) {
         this.tvs.addAll(tvs);
+        notifyDataSetChanged();
+    }
+    public void setTvs(List<TvResponse> tvs) {
+        this.tvs = (ArrayList<TvResponse>) tvs;
         notifyDataSetChanged();
     }
 

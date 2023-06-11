@@ -1,4 +1,4 @@
-package com.ztzrk.h071211021_finalmobile.metwork;
+package com.ztzrk.h071211021_finalmobile.network;
 import com.ztzrk.h071211021_finalmobile.model.MovieDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvDataResponse;
 
@@ -22,12 +22,24 @@ public interface ApiInterface {
             @Query("page") int pageIndex
     );
 
-    @GET("3/3/tv/popular?language=en-US")
+    @GET("3/tv/popular?language=en-US")
     Call<TvDataResponse>
     getPopularTv(
             @Query("api_key") String apiKey,
             @Query("page") int pageIndex
     );
+
+    @GET("3/search/movie")
+    Call<MovieDataResponse> searchMovies(
+            @Query("api_key") String apiKey,
+            @Query("query") String query,
+            @Query("page") int currentPage);
+
+    @GET("3/search/tv")
+    Call<TvDataResponse> searchTVShows(
+            @Query("api_key") String apiKey,
+            @Query("query") String query,
+            @Query("page") int currentPage);
 
     @GET("3/discover/tv?language=en-US")
     Call<TvDataResponse>

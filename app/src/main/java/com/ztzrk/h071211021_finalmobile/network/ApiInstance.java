@@ -1,4 +1,4 @@
-package com.ztzrk.h071211021_finalmobile.metwork;
+package com.ztzrk.h071211021_finalmobile.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

@@ -19,18 +19,14 @@ import android.widget.RadioGroup;
 
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.adapter.MovieAdapter;
-import com.ztzrk.h071211021_finalmobile.metwork.ApiInstance;
-import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
+import com.ztzrk.h071211021_finalmobile.network.ApiInstance;
+import com.ztzrk.h071211021_finalmobile.network.ApiInterface;
 import com.ztzrk.h071211021_finalmobile.model.MovieDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.MovieResponse;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;

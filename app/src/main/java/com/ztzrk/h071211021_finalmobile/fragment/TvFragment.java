@@ -20,16 +20,14 @@ import android.widget.RadioGroup;
 
 import com.ztzrk.h071211021_finalmobile.R;
 import com.ztzrk.h071211021_finalmobile.adapter.TvAdapter;
-import com.ztzrk.h071211021_finalmobile.metwork.ApiInstance;
-import com.ztzrk.h071211021_finalmobile.metwork.ApiInterface;
+import com.ztzrk.h071211021_finalmobile.network.ApiInstance;
+import com.ztzrk.h071211021_finalmobile.network.ApiInterface;
 import com.ztzrk.h071211021_finalmobile.model.TvDataResponse;
 import com.ztzrk.h071211021_finalmobile.model.TvResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
