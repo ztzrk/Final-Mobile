@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ztzrk.h071211021_finalmobile.Database.DatabaseContract;
 import com.ztzrk.h071211021_finalmobile.Database.DatabaseHelper;
@@ -32,6 +33,7 @@ public class FavTvFragment extends Fragment {
 
     private static FavTvFragment instance;
     private RecyclerView rvFavTv;
+    TextView tvEmpty;
     private TvAdapter tvAdapter;
     private DatabaseHelper databaseHelper;
     public FavTvFragment() {
@@ -57,8 +59,15 @@ public class FavTvFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvFavTv = view.findViewById(R.id.rv_fav_tv);
-        List<TvResponse> tvList = retrieveTvFromDatabase();
+        tvEmpty = view.findViewById(R.id.tv_empty);
 
+        List<TvResponse> tvList = retrieveTvFromDatabase();
+        if (tvList.size() == 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+        else {
+            tvEmpty.setVisibility(View.GONE);
+        }
         tvAdapter = new TvAdapter((ArrayList<TvResponse>) tvList);
         // Set up the layout manager and adapter for the RecyclerView
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(),3);
@@ -102,8 +111,16 @@ public class FavTvFragment extends Fragment {
         List<TvResponse> tvList = retrieveTvFromDatabase();
         // Update the adapter with the retrieved data
         tvAdapter = new TvAdapter((ArrayList<TvResponse>) tvList);
+
+        if (tvList.size() == 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
+        }
+
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(),3);
         rvFavTv.setLayoutManager(layoutManager);
         rvFavTv.setAdapter(tvAdapter);
+
     }
 }

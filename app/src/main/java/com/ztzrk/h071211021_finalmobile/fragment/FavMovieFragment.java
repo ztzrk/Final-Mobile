@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ztzrk.h071211021_finalmobile.Database.DatabaseContract;
 import com.ztzrk.h071211021_finalmobile.Database.DatabaseHelper;
@@ -35,6 +36,7 @@ public class FavMovieFragment extends Fragment {
     private RecyclerView rvFavMovie;
     private MovieAdapter movieAdapter;
     private DatabaseHelper databaseHelper;
+    private TextView tvEmpty;
 
     public FavMovieFragment() {
         // Required empty public constructor
@@ -60,7 +62,15 @@ public class FavMovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvFavMovie = view.findViewById(R.id.rv_fav_movie);
+        tvEmpty = view.findViewById(R.id.tv_empty);
+
         ArrayList<MovieResponse> movieList = (ArrayList<MovieResponse>) retrieveMoviesFromDatabase();
+        if (movieList.size() == 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+        else {
+            tvEmpty.setVisibility(View.GONE);
+        }
         movieAdapter = new MovieAdapter(movieList);
 
         // Set up the layout manager and adapter for the RecyclerView
@@ -106,6 +116,13 @@ public class FavMovieFragment extends Fragment {
         List<MovieResponse> movieList = retrieveMoviesFromDatabase();
         // Update the adapter with the retrieved data
         movieAdapter = new MovieAdapter((ArrayList<MovieResponse>) movieList);
+
+        if (movieList.size() == 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+        else {
+            tvEmpty.setVisibility(View.GONE);
+        }
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(),3);
         rvFavMovie.setLayoutManager(layoutManager);
         rvFavMovie.setAdapter(movieAdapter);

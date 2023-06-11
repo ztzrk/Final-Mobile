@@ -4,6 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.FavMovieFragment">
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/secondary"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="There is no favorite movie yet"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_fav_movie"
